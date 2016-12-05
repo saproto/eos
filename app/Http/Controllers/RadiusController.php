@@ -15,6 +15,10 @@ class RadiusController extends Controller
     public function authenticate(Request $request)
     {
 
+        if (!FirewallController::isWhitelisted($request->ip())) {
+            abort(403);
+        }
+
         $privateKey = str_replace('_!n_', "\n", env('RADIUS_PRIVATE_KEY'));
 
         if (!$request->has('challenge')) {
