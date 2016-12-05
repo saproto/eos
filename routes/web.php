@@ -17,4 +17,5 @@ $app->group(['prefix' => 'fishcam', 'as' => 'fishcam::'], function () use ($app)
 
 $app->group(['prefix' => 'radius', 'as' => 'radius::'], function () use ($app) {
     $app->get('auth', ['as' => 'auth', 'uses' => 'RadiusController@authenticate']);
+    $app->post('auth', ['as' => 'auth', 'uses' => 'RadiusController@authenticate']);
 });

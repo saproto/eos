@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 class RadiusController extends Controller
 {
 
+    protected $radiusServers = [
+        'radius1.utsp.utwente.nl',
+        'radius2.utsp.utwente.nl'
+    ];
+
     public function authenticate(Request $request)
     {
 
@@ -47,10 +52,9 @@ class RadiusController extends Controller
 
         $radius = radius_auth_open();
 
-        $radiusServers = explode(',', env('RADIUS_SERVERS'));
         $radiusServerAvailable = false;
 
-        foreach ($radiusServers as $radiusServer) {
+        foreach ($this->radiusServers as $radiusServer) {
             if (radius_add_server($radius, $radiusServer, 0, env('RADIUS_SECRET'), 5, 3)) {
                 $radiusServerAvailable = true;
             }
@@ -64,7 +68,7 @@ class RadiusController extends Controller
             return false;
         }
 
-        radius_put_attr($radius, RADIUS_USER_NAME, $username . '@' . env('RADIUS_REALM'));
+        radius_put_attr($radius, RADIUS_USER_NAME, $username . '@proto.utwente.nl');
         radius_put_attr($radius, RADIUS_USER_PASSWORD, $password);
 
         switch (radius_send_request($radius)) {
