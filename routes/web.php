@@ -14,3 +14,7 @@
 $app->group(['prefix' => 'fishcam', 'as' => 'fishcam::'], function () use ($app) {
     $app->get('stream', ['as' => 'stream', 'uses' => 'FishcamController@getStream']);
 });
+
+$app->group(['prefix' => 'radius', 'as' => 'radius::'], function () use ($app) {
+    $app->get('auth', ['as' => 'auth', 'uses' => 'RadiusController@authenticate']);
+});
