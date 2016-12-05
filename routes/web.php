@@ -11,6 +11,6 @@
 |
 */
 
-$app->get('/', function () use ($app) {
-    return $app->version();
+$app->group(['prefix' => 'fishcam', 'as' => 'fishcam::'], function () use ($app) {
+    $app->get('stream', ['as' => 'stream', 'uses' => 'FishcamController@getStream']);
 });
