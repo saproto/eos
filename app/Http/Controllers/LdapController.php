@@ -41,17 +41,9 @@ class LdapController extends Controller
     public function search(Request $request, $server)
     {
 
-        switch ($server) {
-            case 'proto':
-                if (!FirewallController::isWhitelisted($request->ip())) {
-                    abort(403);
-                }
-                break;
-            case 'utwente':
-                if (!FirewallController::isOnCampus($request->ip())) {
-                    abort(403);
-                }
-                break;
+
+        if (!FirewallController::isWhitelisted($request->ip())) {
+            abort(403);
         }
 
         if (!array_key_exists($server, $this->servers)) {
@@ -88,6 +80,7 @@ class LdapController extends Controller
             'mail',
             'department',
             'telephoneNumber',
+            'physicaldeliveryofficename',
             'postalCode',
             'l',
             'preferredLanguage',
