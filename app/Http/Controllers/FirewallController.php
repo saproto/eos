@@ -10,7 +10,7 @@ class FirewallController extends Controller
 
         $whitelist = [
             '84.245.42.161/32', // Admin
-            '84.245.42.197/32', // Admin
+            '84.245.15.31/32', // Admin
             '37.97.129.76/32',   // Atalanta
             env('DEBUG_IP', '0.0.0.0') . '/32'
         ];
