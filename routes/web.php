@@ -19,7 +19,9 @@ $app->group(['prefix' => 'ldap', 'as' => 'ldap::'], function () use ($app) {
     $app->get('{server}/search', ['as' => 'search', 'uses' => 'LdapController@search']);
 });
 
-$app->group(['prefix' => 'radius', 'as' => 'radius::'], function () use ($app) {
-    $app->get('auth', ['as' => 'auth', 'uses' => 'RadiusController@authenticate']);
-    $app->post('auth', ['as' => 'auth', 'uses' => 'RadiusController@authenticate']);
+$app->group(['prefix' => 'auth', 'as' => 'auth::'], function () use ($app) {
+    $app->get('radius', ['as' => 'auth', 'uses' => 'AuthController@authRadius']);
+    $app->post('radius', ['as' => 'auth', 'uses' => 'AuthController@authRadius']);
+    $app->get('ldap', ['as' => 'auth', 'uses' => 'AuthController@authLdap']);
+    $app->post('ldap', ['as' => 'auth', 'uses' => 'AuthController@authLdap']);
 });

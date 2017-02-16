@@ -38,6 +38,17 @@ class LdapController extends Controller
 
     ];
 
+    public function auth($username, $password) {
+
+        $config = $this->servers['utwente'];
+        $config['admin_username'] = env('LDAP_UTWENTE_USER');
+        $config['admin_password'] = env('LDAP_UTWENTE_PASS');
+
+        $provider = new Provider($config);
+        return $provider->auth()->attempt($username, $password);
+
+    }
+
     public function search(Request $request, $server)
     {
 
