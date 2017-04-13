@@ -10,46 +10,7 @@ use Adldap\Connections\Provider;
 class LdapController extends Controller
 {
 
-    protected $servers = [
-
-        'utwente' => [
-            'account_prefix' => '',
-            'account_suffix' => '@utwente.nl',
-            'domain_controllers' => ['ldapauth-dc.ad.utwente.nl'],
-            'port' => 636,
-            'timeout' => 5,
-            'base_dn' => 'OU=Accounts,DC=ad,DC=utwente,DC=nl',
-            'follow_referrals' => false,
-            'use_ssl' => true,
-            'use_tls' => false,
-        ],
-
-        'proto' => [
-            'account_prefix' => '',
-            'account_suffix' => '@ad.saproto.nl',
-            'domain_controllers' => ['ad.proto.utwente.nl'],
-            'port' => 636,
-            'timeout' => 5,
-            'base_dn' => 'OU=Proto,DC=ad,DC=saproto,DC=nl',
-            'follow_referrals' => false,
-            'use_ssl' => true,
-            'use_tls' => false,
-        ]
-
-    ];
-
-    public function auth($username, $password) {
-
-        $config = $this->servers['utwente'];
-        $config['admin_username'] = env('LDAP_UTWENTE_USER');
-        $config['admin_password'] = env('LDAP_UTWENTE_PASS');
-
-        $provider = new Provider($config);
-        return $provider->auth()->attempt($username, $password);
-
-    }
-
-    public function search(Request $request, $server)
+    public function search(Request $request)
     {
 
 
@@ -57,17 +18,23 @@ class LdapController extends Controller
             abort(403);
         }
 
-        if (!array_key_exists($server, $this->servers)) {
-            abort(404);
-        }
-
         if (!$request->has('filter')) {
             abort(500);
         }
 
-        $config = $this->servers[$server];
-        $config['admin_username'] = env('LDAP_' . strtoupper($server) . '_USER');
-        $config['admin_password'] = env('LDAP_' . strtoupper($server) . '_PASS');
+        $config = [
+            'account_prefix' => '',
+            'account_suffix' => '@utwente.nl',
+            'domain_controllers' => [getenv('LDAP_SERVER')],
+            'port' => 636,
+            'timeout' => 5,
+            'base_dn' => getenv('LDAP_BASEDN'),
+            'follow_referrals' => false,
+            'use_ssl' => true,
+            'use_tls' => false,
+            'admin_username' => env('LDAP_USER'),
+            'admin_password' => env('LDAP_PASS')
+        ];
 
         $ad = new Adldap();
         $provider = new Provider($config);
@@ -76,7 +43,7 @@ class LdapController extends Controller
 
         $filter = [
             '(objectClass=organizationalPerson)',
-            '(' . $request->filter . ')'
+            '(' . urldecode($request->filter) . ')'
         ];
 
         $select = [
@@ -97,7 +64,8 @@ class LdapController extends Controller
             'preferredLanguage',
             'streetAddress',
             'sAMAccountName',
-            'wWWHomePage'
+            'wWWHomePage',
+            'extensionAttribute6'
         ];
 
         return $provider->search()->select($select)->rawFilter($filter)->get();

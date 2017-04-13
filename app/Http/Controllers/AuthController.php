@@ -12,11 +12,6 @@ class AuthController extends Controller
         return $this->authenticate($request, new RadiusController);
     }
 
-    public function authLdap(Request $request)
-    {
-        return $this->authenticate($request, new LdapController);
-    }
-
     private function authenticate(Request $request, $controller)
     {
 

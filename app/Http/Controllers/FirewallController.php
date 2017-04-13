@@ -8,12 +8,7 @@ class FirewallController extends Controller
     public static function isWhitelisted($ip)
     {
 
-        $whitelist = [
-            '84.245.42.161/32', // Admin
-            '84.245.15.31/32', // Admin
-            '37.97.129.76/32',   // Atalanta
-            env('DEBUG_IP', '0.0.0.0') . '/32'
-        ];
+        $whitelist = explode(',', getenv('IP_WHITELIST'));
 
         foreach ($whitelist as $range) {
             if (FirewallController::cidr_match($ip, $range)) {
@@ -21,22 +16,6 @@ class FirewallController extends Controller
             }
         }
         return false;
-
-    }
-
-    public static function isOnCampus($ip)
-    {
-
-        $campus = [
-            '130.89.0.0/16'     // University Campus
-        ];
-
-        foreach ($campus as $range) {
-            if (FirewallController::cidr_match($ip, $range)) {
-                return true;
-            }
-        }
-        return FirewallController::isWhitelisted($ip);
 
     }
 
